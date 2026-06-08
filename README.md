@@ -6,7 +6,7 @@
 
 ## Thông Tin Học Viên
 - **Họ và tên:** Vũ Tuấn Phương
-- **Mã số sinh viên (MSSV):** 2A202600772
+- **MSSV:** 2A202600772
 - **Dự án:** Xây dựng RAG Pipeline v2
 
 ---
