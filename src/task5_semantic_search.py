@@ -2,17 +2,12 @@
 Task 5 — Semantic Search Module.
 
 Viết module tìm kiếm ngữ nghĩa (dense retrieval) trên vector store.
-
-Yêu cầu:
-    - Input: query string + top_k
-    - Output: danh sách chunks có score, sorted descending
-    - Phải tương thích với embedding model và vector store ở Task 4
 """
 
 
 def semantic_search(query: str, top_k: int = 10) -> list[dict]:
     """
-    Tìm kiếm ngữ nghĩa sử dụng vector similarity.
+    Tìm kiếm ngữ nghĩa sử dụng vector similarity (Cosine similarity tính trên local JSON file).
 
     Args:
         query: Câu truy vấn
@@ -26,37 +21,51 @@ def semantic_search(query: str, top_k: int = 10) -> list[dict]:
         }
         Sorted by score descending.
     """
-    # TODO: Implement semantic search
-    #
-    # Bước 1: Embed query bằng cùng model ở Task 4
-    # Bước 2: Query vector store (cosine similarity)
-    # Bước 3: Return top_k results
-    #
-    # Ví dụ với Weaviate:
-    # import weaviate
-    # from sentence_transformers import SentenceTransformer
-    #
-    # model = SentenceTransformer("BAAI/bge-m3")
-    # query_embedding = model.encode(query).tolist()
-    #
-    # client = weaviate.connect_to_local()
-    # collection = client.collections.get("DrugLawDocs")
-    #
-    # results = collection.query.near_vector(
-    #     near_vector=query_embedding,
-    #     limit=top_k,
-    #     return_metadata=MetadataQuery(distance=True)
-    # )
-    #
-    # return [
-    #     {
-    #         "content": obj.properties["content"],
-    #         "score": 1 - obj.metadata.distance,  # distance → similarity
-    #         "metadata": {"source": obj.properties["source"], ...}
-    #     }
-    #     for obj in results.objects
-    # ]
-    raise NotImplementedError("Implement semantic_search")
+    import json
+    import numpy as np
+    from pathlib import Path
+    from sentence_transformers import SentenceTransformer
+
+    db_file = Path(__file__).parent.parent / "data" / "vector_store.json"
+    if not db_file.exists():
+        return []
+
+    try:
+        chunks = json.loads(db_file.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+
+    if not chunks:
+        return []
+
+    # Khởi tạo mô hình và mã hoá query
+    model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+    query_embedding = model.encode(query)
+    query_norm = np.linalg.norm(query_embedding)
+
+    results = []
+    for c in chunks:
+        emb = np.array(c["embedding"])
+        emb_norm = np.linalg.norm(emb)
+        
+        if query_norm == 0.0 or emb_norm == 0.0:
+            sim = 0.0
+        else:
+            sim = float(np.dot(query_embedding, emb) / (query_norm * emb_norm))
+
+        results.append({
+            "content": c["content"],
+            "score": sim,
+            "metadata": {
+                "source": c["metadata"].get("source"),
+                "type": c["metadata"].get("doc_type"),
+                "chunk_index": c["metadata"].get("chunk_index")
+            }
+        })
+
+    # Sắp xếp giảm dần theo điểm tương đồng cosine
+    results.sort(key=lambda x: x["score"], reverse=True)
+    return results[:top_k]
 
 
 if __name__ == "__main__":

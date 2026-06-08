@@ -4,6 +4,13 @@
 
 ---
 
+## Thông Tin Học Viên
+- **Họ và tên:** Vũ Tuấn Phương
+- **Mã số sinh viên (MSSV):** 2A202600772
+- **Dự án:** Xây dựng RAG Pipeline v2
+
+---
+
 ## Mục Tiêu
 
 Xây dựng một RAG pipeline thực tế, end-to-end, từ thu thập dữ liệu pháp luật và báo chí về ma tuý → xử lý → indexing → retrieval (hybrid + vectorless fallback) → generation có citation.
@@ -527,10 +534,12 @@ run_dashboard()
 
 | Thành viên | MSSV | Nhiệm vụ | Trạng thái |
 |-----------|------|----------|------------|
-| | | | |
-| | | | |
-| | | | |
-| | | | |
+| **Vũ Ngọc Vinh** | 2A202600864 | Data Engineer & Processing (Task 1, 2, 3) | Hoàn thành |
+| **Hoàng Hải** | 2AA202600948 | Vector DB & Embedding (Task 4, 5) | Hoàn thành |
+| **Vũ Hải Dương** | 2AA202600632 | Lexical & Vectorless RAG (Task 6, 8) | Hoàn thành |
+| **Vũ Thành Lộc** | 2A202600684 | Reranking & Hybrid Pipeline (Task 7, 9) | Hoàn thành |
+| **Vũ Tuấn Phương** | 2A202600772 | Generation & Prompt Engineering (Task 10) | Hoàn thành |
+| **Nguyễn Danh Thành** | 2A202600581 | Full-stack UI/UX & Evaluation | Hoàn thành |
 
 ---
 
